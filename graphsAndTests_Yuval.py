@@ -49,8 +49,8 @@ def basicRangeCleaner(DataForm):
     #takes a cleaned up data set of a single variable, takes out obvious outliers detected using a flat range.
     #uses global variable 'ranges', containing ranges for each variable
     variables = DataForm.loc[:,'variable']
-    range = ranges.loc[variables[0]]
-    return DataForm.loc[(DataForm['value']>range[0]) & (DataForm['value']<28)]
+    range = ranges.loc[:,variables.iloc[0]]
+    return DataForm.loc[(DataForm['value']>range[0]) & (DataForm['value']<range[1])]
 
 NC_Eno_WaterTempC_basicClean = basicRangeCleaner(NC_Eno_WaterTempC)
 plotGraph(NC_Eno_WaterTempC_basicClean)
