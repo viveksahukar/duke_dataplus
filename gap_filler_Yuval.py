@@ -7,30 +7,12 @@ import scipy as sy
 import scipy.fftpack as syfp
 import pylab as pyl
 
-myfile = pd.read_csv("flagged_sites.csv", sep=',', parse_dates=True)
+from main_functions import readFile, getData, plotGraph
 
-def getData(DataForm, region, site, variable):
-    #import numpy as np
-    #import pandas as pd
-    regionFile = DataForm.loc[DataForm['regionID']==region]
-    siteFile = regionFile.loc[regionFile['siteID']==site]
-    return siteFile.loc[siteFile['variable']==variable]      #return dirty file (all flags are kept) for given region, site, and variable name
+myfile = readFile();
 
-def plotGraph(DataForm):
-    #import these libraries in the following way, in order for this to work:
-    #import matplotlib.pyplot as plt
-    #import matplotlib.dates as pltdates
-    #import datetime as dt
-    #use on data extracted using 'getData' helper function
-    dates = [dt.datetime.strptime(d,'%Y-%m-%d %H:%M:%S').date() for d in DataForm.dateTimeUTC]
-    datenums = pltdates.date2num(dates)
-    fig1, ax1 = plt.subplots();
-    ax1.plot_date(dates, DataForm.value)
-    region = DataForm.loc[:, 'regionID']
-    site = DataForm.loc[:,'siteID']
-    variable = DataForm.loc[:,'variable']
-    ax1.set_title(region.iloc[0] + ', ' + site.iloc[0] + ', ' + variable.iloc[0])
-    return
+NC_Eno_WaterTempC = getData(myfile, 'NC', 'Eno', 'WaterTemp_C')
+plotGraph(NC_Eno_WaterTempC)
 
 #given a data form, and a start and end, which are dates in the same format as in the main .csv file
 def gapFill(DataForm, start, end):
