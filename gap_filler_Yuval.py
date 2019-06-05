@@ -19,19 +19,17 @@ def gapFill(DataForm, start_date, end_date):
     i = 0
     while(DataForm['dateTimeUTC'].iloc[i].hours != start_hour & DataForm['dateTimeUTC'].iloc[i].minutes != start_minute):
         i++
-    square_difs = dict()
+    averages = dict()
     while(DataForm['dateTimeUTC'].iloc[i] < DataForm['dateTimeUTC'].iloc[-1] - duration):       #index -1 means the last index in the dataform
         if(DataForm['dateTimeUTC'].iloc[i] == start_date):
-            while(DataForm['dateTimeUTC'].iloc[i] <= end_date):
+            while(DataForm['dateTimeUTC'].iloc[i] <= end_date):         #loop through to skip the gap
                 i++
         else:
-            dictindex = DataForm['dateTimeUTC'].iloc[i]
-            while(DataForm['dateTimeUTC'].iloc[i] < dictindex + duration):
+            dictindex = DataForm['dateTimeUTC'].iloc[i]             #dictindex is the starting timestamp for each period we take the average of
+            j = 0
+            while(DataForm['dateTimeUTC'].iloc[i] < dictindex + duration):      #while our current date is within our current period
                 currentdate = DataForm['dateTimeUTC'].iloc[i]
-                while(DataForm['dateTimeUTC'].iloc[i] == currentdate):
-                    key = [DataForm['dateTimeUTC'].iloc[i], DataForm['variable'].iloc[i]]
-
-            sum = 0
-            for j in xrange(96):
-
-            i += 96
+                while(DataForm['dateTimeUTC'].iloc[i] == currentdate):          #loop through one set of variables for one specific timestamp (currentdate)
+                    key = [currentdate, DataForm['variable'].iloc[i]]           #a tuple containing the starting date, and the variable for one entry in the averages dictionary
+                    averages[key] = (averages[key] * j + DataForm['value'].iloc[i]) / (j+1)     #update the average
+                j++          #j is the number of elements we count for each variable (we increment it after looping through one complete set of different variables for one timestamp)
