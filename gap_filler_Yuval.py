@@ -9,34 +9,27 @@ import pylab as pyl
 
 from main_functions import readFile, getData, plotGraph
 
-myfile = readFile();
-
-NC_Eno_WaterTempC = getData(myfile, 'NC', 'Eno', 'WaterTemp_C')
-plotGraph(NC_Eno_WaterTempC)
+myfile = readFile()
 
 #given a data form, and a start and end, which are dates in the same format as in the main .csv file
-def gapFill(DataForm, start, end):
-    start_date = dt.datetime.strptime(start,'%Y-%m-%d %H:%M:%S').date()
-    end_date = dt.datetime.strptime(end,'%Y-%m-%d %H:%M:%S').date()
+def gapFill(DataForm, start_date, end_date):
     duration = dt.timedelta(end_date) - dt.timedelta(start_date)
-    duration /= dt.timedelta(minutes=15)
     start_hour = start_date.hours
     start_minute = start_date.minutes
-    startindex = 0
-    for i in xrange(96):        #how many 15 minute intervals exist in one day
-        thisdate = dt.datetime.strptime(DataForm.iloc[i,0],'%Y-%m-%d %H:%M:%S').date()
-        if(thisdate.hours = start_hour & thisdate.minutes = start_minute):
-            startindex = i
-            break
-        #need to fix this loop (and all loops) because DataForm will have multiple entries for one date!
     i = 0
-    square_difs = np.array((len(DataForm)-startindex)/96, 1)
-    skipindex = ( dt.timedelta(start_date) - dt.timedelta(dt.datetime.strptime(DataForm.iloc[startindex,0],'%Y-%m-%d %H:%M:%S').date()) ) / dt.timedelta(minutes = 15)
-    while i < len(square_difs):
-        if(i = skipindex):
-            i += 96
-            continue
-        sum = 0
-        for j in xrange(96):
-
-        i += 96
+    while(DataForm['dateTimeUTC'].iloc[i].hours != start_hour & DataForm['dateTimeUTC'].iloc[i].minutes != start_minute):
+        i++
+    averages = dict()
+    while(DataForm['dateTimeUTC'].iloc[i] < DataForm['dateTimeUTC'].iloc[-1] - duration):       #index -1 means the last index in the dataform
+        if(DataForm['dateTimeUTC'].iloc[i] == start_date):
+            while(DataForm['dateTimeUTC'].iloc[i] <= end_date):         #loop through to skip the gap
+                i++
+        else:
+            dictindex = DataForm['dateTimeUTC'].iloc[i]             #dictindex is the starting timestamp for each period we take the average of
+            j = 0
+            while(DataForm['dateTimeUTC'].iloc[i] < dictindex + duration):      #while our current date is within our current period
+                currentdate = DataForm['dateTimeUTC'].iloc[i]
+                while(DataForm['dateTimeUTC'].iloc[i] == currentdate):          #loop through one set of variables for one specific timestamp (currentdate)
+                    key = [currentdate, DataForm['variable'].iloc[i]]           #a tuple containing the starting date, and the variable for one entry in the averages dictionary
+                    averages[key] = (averages[key] * j + DataForm['value'].iloc[i]) / (j+1)     #update the average
+                j++          #j is the number of elements we count for each variable (we increment it after looping through one complete set of different variables for one timestamp)
