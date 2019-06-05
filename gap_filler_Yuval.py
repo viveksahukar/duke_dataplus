@@ -17,18 +17,19 @@ def gapFill(DataForm, start_date, end_date):
     start_hour = start_date.hours
     start_minute = start_date.minutes
     i = 0
-    while(DateForm.iloc[i,2].hours != start_hour & DateForm.iloc[i,2].minutes != start_minute):        #how many 15 minute intervals exist in one day
+    while(DataForm['dateTimeUTC'].iloc[i].hours != start_hour & DataForm['dateTimeUTC'].iloc[i].minutes != start_minute):
         i++
     square_difs = dict()
-    while(DataForm.iloc[i,2] < DataForm['dateTimeUTC'].iloc(-1) - duration):
-        if(DateForm.iloc[i,2] == start_date):
-            while(DataForm.iloc[i,2] <= end_date):
+    while(DataForm['dateTimeUTC'].iloc[i] < DataForm['dateTimeUTC'].iloc[-1] - duration):       #index -1 means the last index in the dataform
+        if(DataForm['dateTimeUTC'].iloc[i] == start_date):
+            while(DataForm['dateTimeUTC'].iloc[i] <= end_date):
                 i++
         else:
-            dictindex = DataForm.iloc[i,2]
-            while(DataForm.iloc[i,2] < dictindex + duration):
-                currentdate = DataForm.iloc[i,2]
-                while(DataForm.iloc[i,2] == currentdate):
+            dictindex = DataForm['dateTimeUTC'].iloc[i]
+            while(DataForm['dateTimeUTC'].iloc[i] < dictindex + duration):
+                currentdate = DataForm['dateTimeUTC'].iloc[i]
+                while(DataForm['dateTimeUTC'].iloc[i] == currentdate):
+                    key = [DataForm['dateTimeUTC'].iloc[i], DataForm['variable'].iloc[i]]
 
             sum = 0
             for j in xrange(96):
